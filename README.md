@@ -1,2 +1,2 @@
-# Abyss-math
+# abyss-science
 platformer game
