@@ -115,3 +115,97 @@ addEventListener("keyup", ({ keyCode }) => {
       break;
   }
 });
+
+function isMobile() {
+  return (
+    /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+    ("ontouchstart" in window && navigator.maxTouchPoints > 0)
+  );
+}
+
+// Force show buttons for testing — REMOVE this in production
+if (isMobile()) {
+  const leftController = document.createElement("div");
+  const rightController = document.createElement("div");
+
+  // Inline style
+  Object.assign(leftController.style, {
+    position: "fixed",
+    bottom: "20px",
+    left: "20px",
+    display: "flex",
+    gap: "20px",
+    zIndex: "1000",
+    backgroundColor: "rgba(255,0,0,0.3)", // TEMP for visibility
+  });
+
+  Object.assign(rightController.style, {
+    position: "fixed",
+    bottom: "20px",
+    right: "20px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "20px",
+    zIndex: "1000",
+    backgroundColor: "rgba(0,255,0,0.3)", // TEMP for visibility
+  });
+
+  leftController.innerHTML = `
+        <button id="left-btn">Left</button>
+        <button id="right-btn">Right</button>
+      `;
+
+  rightController.innerHTML = `
+        <button id="up-btn">Up</button>
+        <button id="down-btn">Down</button>
+      `;
+
+  document.body.appendChild(leftController);
+  document.body.appendChild(rightController);
+
+  // Style buttons
+  ["left-btn", "right-btn", "up-btn", "down-btn"].forEach((id) => {
+    const btn = document.getElementById(id);
+    Object.assign(btn.style, {
+      padding: "20px",
+      fontSize: "20px",
+      borderRadius: "10px",
+      border: "none",
+      backgroundColor: "rgba(0, 0, 0, 0.7)",
+      color: "white",
+      zIndex: "1000",
+    });
+  });
+
+  // Events
+  const leftBtn = document.getElementById("left-btn");
+  const rightBtn = document.getElementById("right-btn");
+  const upBtn = document.getElementById("up-btn");
+  const downBtn = document.getElementById("down-btn");
+
+  leftBtn.addEventListener("touchstart", () => {
+    keys.left.pressed = true;
+  });
+  leftBtn.addEventListener("touchend", () => {
+    keys.left.pressed = false;
+  });
+
+  rightBtn.addEventListener("touchstart", () => {
+    keys.right.pressed = true;
+  });
+  rightBtn.addEventListener("touchend", () => {
+    keys.right.pressed = false;
+  });
+
+  upBtn.addEventListener("touchstart", () => {
+    if (player.velocity.y === 0) {
+      player.velocity.y = -10;
+    }
+  });
+
+  downBtn.addEventListener("touchstart", () => {
+    console.log("down button pressed");
+  });
+
+  console.log("Controllers added.");
+}
