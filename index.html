@@ -1,5 +1,33 @@
-<link rel="stylesheet" type="text/css" href="styles.css" />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Abyss</title>
+  <link rel="stylesheet" type="text/css" href="styles.css" />
+</head>
 
-<canvas></canvas>
+<body>
+  <!-- Canvas for the game -->
+  <canvas style="image-rendering: pixelated; display: block;"></canvas>
 
-<script src="index.js"></script>
+  <!-- Game asset scripts -->
+  <script src="./data/l_sky.js"></script>
+  <script src="./data/l_cloud.js"></script>
+  <script src="./data/l_mount.js"></script>
+  <script src="./data/l_ground.js"></script>
+  <script src="./data/l_Decor.js"></script>
+  <script src="./data/l_collisions.js"></script>
+  <script src="./data/collisions.js"></script>
+
+  <!-- Core game scripts -->
+  <script src="./js/utils.js"></script>
+  <script src="./classes/CollisionBlock.js"></script>
+  <script src="./classes/Platform.js"></script>
+  <script src="./classes/Player.js"></script>
+
+  <!-- Main logic -->
+  <script src="./js/index.js"></script>
+  <script src="./js/eventListeners.js"></script>
+</body>
+</html>
