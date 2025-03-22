@@ -1,33 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Abyss</title>
-  <link rel="stylesheet" type="text/css" href="styles.css" />
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Abyss</title>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+  </head>
 
-<body>
-  <!-- Canvas for the game -->
-  <canvas style="image-rendering: pixelated; display: block;"></canvas>
+  <body>
+    <!-- Canvas for the game -->
+    <canvas style="image-rendering: pixelated; display: block"></canvas>
+    <a
+      href="https://trakteer.id/grayu3/tip"
+      class="trakteer-btn"
+      target="_blank"
+    >
+      🍦belikan aku es krim
+    </a>
+    <!-- Game asset scripts -->
+    <script src="./data/l_sky.js"></script>
+    <script src="./data/l_cloud.js"></script>
+    <script src="./data/l_mount.js"></script>
+    <script src="./data/l_ground.js"></script>
+    <script src="./data/l_Decor.js"></script>
+    <script src="./data/l_collisions.js"></script>
+    <script src="./data/collisions.js"></script>
 
-  <!-- Game asset scripts -->
-  <script src="./data/l_sky.js"></script>
-  <script src="./data/l_cloud.js"></script>
-  <script src="./data/l_mount.js"></script>
-  <script src="./data/l_ground.js"></script>
-  <script src="./data/l_Decor.js"></script>
-  <script src="./data/l_collisions.js"></script>
-  <script src="./data/collisions.js"></script>
+    <!-- Core game scripts -->
+    <script src="./js/utils.js"></script>
+    <script src="./classes/CollisionBlock.js"></script>
+    <script src="./classes/Platform.js"></script>
+    <script src="./classes/Player.js"></script>
 
-  <!-- Core game scripts -->
-  <script src="./js/utils.js"></script>
-  <script src="./classes/CollisionBlock.js"></script>
-  <script src="./classes/Platform.js"></script>
-  <script src="./classes/Player.js"></script>
-
-  <!-- Main logic -->
-  <script src="./js/index.js"></script>
-  <script src="./js/eventListeners.js"></script>
-</body>
+    <!-- Main logic -->
+    <script src="./js/index.js"></script>
+    <script src="./js/eventListeners.js"></script>
+  </body>
 </html>
