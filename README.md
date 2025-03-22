@@ -1,4 +1,4 @@
-# abyss-science
+# abyss
 web-based platformer game
 works on mobile and dekstop
 
