@@ -3,15 +3,24 @@ const c = canvas.getContext("2d");
 const dpr = 2;
 
 canvas.width = 1366 * dpr;
-canvas.height = 720  * dpr;
+canvas.height = 720 * dpr;
 
 canvas.style.width = window.innerWidth + "px";
 canvas.style.height = window.innerHeight + "px";
 
-const layersData = {
+const skyLayerData = {
   l_sky: l_sky,
+};
+
+const cloudLayerData = {
   l_cloud: l_cloud,
+};
+
+const mountLayerData = {
   l_mount: l_mount,
+};
+
+const layersData = {
   l_ground: l_ground,
   l_Decor: l_Decor,
   l_collisions: l_collisions,
@@ -137,7 +146,10 @@ const camera = {
 };
 
 lastTime = performance.now();
-const SCROLL_POST_RIGHT = 120;
+const SCROLL_POST_RIGHT = 150;
+let skyBackgroundCanvas = null;
+let cloudBackgroundCanvas = null;
+let mountBackgroundCanvas = null;
 
 function animate(backgroundCanvas) {
   // Calculate delta time
@@ -156,10 +168,13 @@ function animate(backgroundCanvas) {
   }
   // Render scene
   c.save();
-  c.clearRect(0, 0, canvas.width, canvas.height);
   c.scale(dpr + 2.5, dpr + 2.5);
-  c.translate(-camera.x, 0);
-  
+  c.translate(-camera.x, -camera.y);
+  c.clearRect(0, 0, canvas.width, canvas.height);
+  c.drawImage(skyBackgroundCanvas, 0, 0)
+  c.drawImage(cloudBackgroundCanvas, camera.x * 0.32, 0);
+  c.drawImage(mountBackgroundCanvas, camera.x * 0.16, 0);
+
   c.drawImage(backgroundCanvas, 0, 0);
   player.draw(c);
   // c.fillRect(SCROLL_POST_RIGHT, 200, 10, 100);
@@ -171,6 +186,10 @@ function animate(backgroundCanvas) {
 const startRendering = async () => {
   try {
     const backgroundCanvas = await renderStaticLayers(layersData);
+    skyBackgroundCanvas = await renderStaticLayers(skyLayerData);
+    cloudBackgroundCanvas = await renderStaticLayers(cloudLayerData);
+    mountBackgroundCanvas = await renderStaticLayers(mountLayerData);
+
     if (!backgroundCanvas) {
       console.error("Failed to create the background canvas");
       return;
