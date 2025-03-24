@@ -130,39 +130,39 @@ const player = new Player({
 const slimers = [
   new Slimer({
     x: 510,
-    y: 20,
+    y: 100,
     width: 28,
-    height: 26
+    height: 26,
   }),
   new Slimer({
     x: 610,
-    y: 20,
+    y: 100,
     width: 28,
-    height: 26
+    height: 26,
   }),
   new Slimer({
     x: 910,
-    y: 20,
+    y: 100,
     width: 28,
-    height: 26
+    height: 26,
   }),
   new Slimer({
     x: 1210,
-    y: 20,
+    y: 100,
     width: 28,
-    height: 26
+    height: 26,
   }),
   new Slimer({
     x: 1410,
-    y: 20,
+    y: 100,
     width: 28,
-    height: 26
+    height: 26,
   }),
   new Slimer({
     x: 1810,
-    y: 20,
+    y: 100,
     width: 28,
-    height: 26
+    height: 26,
   }),
 ];
 
@@ -207,19 +207,27 @@ function animate(backgroundCanvas) {
     const slimer = slimers[i];
     slimer.update(deltaTime, collisionBlocks);
     // jump on enemy
-    if (checkCollision(player, slimer)) {
-      player.velocity.y = -200;
-      sprites.push(
-        new Sprite({
-          x: slimer.x,
-          y: slimer.y,
-          width: 28,
-          height: 26,
-          imageSrc: "./images/enemy-death.png",
-          spriteCropbox: { x: 0, y: 0, width: 28, height: 26, frames: 4 },
-        })
-      );
-      slimers.splice(i, 1)
+    const collisionDirection = checkCollision(player, slimer);
+    if (collisionDirection) {
+      if (collisionDirection === "bottom" && !player.isOnGround) {
+        player.velocity.y = -200;
+        sprites.push(
+          new Sprite({
+            x: slimer.x,
+            y: slimer.y,
+            width: 28,
+            height: 26,
+            imageSrc: "./images/enemy-death.png",
+            spriteCropbox: { x: 0, y: 0, width: 28, height: 26, frames: 4 },
+          })
+        );
+        slimers.splice(i, 1);
+      } else if (
+        collisionDirection === "left" ||
+        collisionDirection === "right"
+      ) {
+        player.setIsInvincible();
+      }
     }
   }
   for (let i = sprites.length - 1; i >= 0; i--) {
