@@ -23,10 +23,10 @@ class Slimer {
     this.currentFrame = 0;
     this.sprites = {
       run: {
-        x: 9,
-        y: 5,
+        x: 0,
+        y: 0,
         width: 41,
-        height: 32,
+        height: 37,
         frames: 8,
       },
     };
@@ -35,7 +35,7 @@ class Slimer {
     this.hitbox = {
       x: 0,
       y: 0,
-      width: 20,
+      width: 28,
       height: 18,
     };
     this.distanceTraveled = 0;
