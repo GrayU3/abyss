@@ -122,10 +122,51 @@ const renderStaticLayers = async (layersData) => {
 // Change xy coordinates to move player's default position
 const player = new Player({
   x: 100,
-  y: 100,
+  y: 20,
   size: 32,
   velocity: { x: 0, y: 0 },
 });
+
+const slimers = [
+  new Slimer({
+    x: 510,
+    y: 100,
+    width: 28,
+    height: 26
+  }),
+  new Slimer({
+    x: 610,
+    y: 100,
+    width: 28,
+    height: 26
+  }),
+  new Slimer({
+    x: 910,
+    y: 100,
+    width: 28,
+    height: 26
+  }),
+  new Slimer({
+    x: 1210,
+    y: 100,
+    width: 28,
+    height: 26
+  }),
+  new Slimer({
+    x: 1410,
+    y: 100,
+    width: 28,
+    height: 26
+  }),
+  new Slimer({
+    x: 1810,
+    y: 100,
+    width: 28,
+    height: 26
+  }),
+];
+
+const sprites = [];
 
 const keys = {
   w: {
@@ -161,6 +202,35 @@ function animate(backgroundCanvas) {
   player.handleInput(keys);
   player.update(deltaTime, collisionBlocks);
 
+  //update slimer position
+  for (let i = slimers.length - 1; i >= 0; i--) {
+    const slimer = slimers[i];
+    slimer.update(deltaTime, collisionBlocks);
+    // jump on enemy
+    if (checkCollision(player, slimer)) {
+      player.velocity.y = -200;
+      sprites.push(
+        new Sprite({
+          x: slimer.x,
+          y: slimer.y,
+          width: 28,
+          height: 26,
+          imageSrc: "./images/enemy-death.png",
+          spriteCropbox: { x: 0, y: 0, width: 28, height: 26, frames: 4 },
+        })
+      );
+      slimers.splice(i, 1)
+    }
+  }
+  for (let i = sprites.length - 1; i >= 0; i--) {
+    const sprite = sprites[i];
+    sprite.update(deltaTime);
+
+    if (sprite.iteration === 1) {
+      sprites.splice(i, 1);
+    }
+  }
+
   //track scroll post distance
   if (player.x > SCROLL_POST_RIGHT) {
     const scrollPostDistance = player.x - SCROLL_POST_RIGHT;
@@ -171,12 +241,21 @@ function animate(backgroundCanvas) {
   c.scale(dpr + 2.5, dpr + 2.5);
   c.translate(-camera.x, -camera.y);
   c.clearRect(0, 0, canvas.width, canvas.height);
-  c.drawImage(skyBackgroundCanvas, 0, 0)
+  c.drawImage(skyBackgroundCanvas, 0, 0);
   c.drawImage(cloudBackgroundCanvas, camera.x * 0.32, 0);
   c.drawImage(mountBackgroundCanvas, camera.x * 0.16, 0);
-
   c.drawImage(backgroundCanvas, 0, 0);
   player.draw(c);
+
+  for (let i = slimers.length - 1; i >= 0; i--) {
+    const slimer = slimers[i];
+    slimer.draw(c);
+  }
+  for (let i = sprites.length - 1; i >= 0; i--) {
+    const sprite = sprites[i];
+    sprite.draw(c);
+  }
+
   // c.fillRect(SCROLL_POST_RIGHT, 200, 10, 100);
   c.restore();
 
