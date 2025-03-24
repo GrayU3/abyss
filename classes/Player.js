@@ -56,6 +56,14 @@ class Player {
       width: 21,
       height: 24,
     };
+    this.isInvincible = false;
+  }
+
+  setIsInvincible() {
+    this.isInvincible = true
+    setTimeout(() => {
+      this.isInvincible = false
+    }, 1500)
   }
 
   draw(c) {
@@ -77,6 +85,11 @@ class Player {
         x = -this.x - this.width;
       }
       c.save();
+      if (this.isInvincible) {
+        c.globalAlpha = 0.5;
+      } else {
+        c.globalAlpha = 1;
+      }
       c.scale(xScale, 1);
       c.drawImage(
         this.image,
@@ -104,8 +117,8 @@ class Player {
       this.elapsedTime -= secondsInterval;
     }
     // update hitbox
-    this.hitbox.x = this.x + 6
-    this.hitbox.y = this.y + 8
+    this.hitbox.x = this.x + 6;
+    this.hitbox.y = this.y + 8;
 
     this.applyGravity(deltaTime);
 
@@ -171,12 +184,12 @@ class Player {
 
   updateHorizontalPosition(deltaTime) {
     this.x += this.velocity.x * deltaTime;
-    this.hitbox.x += this.velocity.x * deltaTime
+    this.hitbox.x += this.velocity.x * deltaTime;
   }
 
   updateVerticalPosition(deltaTime) {
     this.y += this.velocity.y * deltaTime;
-    this.hitbox.y += this.velocity.y * deltaTime
+    this.hitbox.y += this.velocity.y * deltaTime;
   }
 
   applyGravity(deltaTime) {
@@ -208,14 +221,14 @@ class Player {
         // Check collision while player is going left
         if (this.velocity.x < -0) {
           this.hitbox.x = collisionBlock.x + collisionBlock.width + buffer;
-          this.x = this.hitbox.x - 6
+          this.x = this.hitbox.x - 6;
           break;
         }
 
         // Check collision while player is going right
         if (this.velocity.x > 0) {
           this.hitbox.x = collisionBlock.x - this.hitbox.width - buffer;
-          this.x = this.hitbox.x - 6
+          this.x = this.hitbox.x - 6;
           break;
         }
       }
@@ -238,7 +251,7 @@ class Player {
         if (this.velocity.y < 0) {
           this.velocity.y = 0;
           this.hitbox.y = collisionBlock.y + collisionBlock.height + buffer;
-          this.y = this.hitbox.y - 8
+          this.y = this.hitbox.y - 8;
           break;
         }
 
