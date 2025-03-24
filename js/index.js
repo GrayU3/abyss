@@ -130,37 +130,37 @@ const player = new Player({
 const slimers = [
   new Slimer({
     x: 510,
-    y: 100,
+    y: 20,
     width: 28,
     height: 26
   }),
   new Slimer({
     x: 610,
-    y: 100,
+    y: 20,
     width: 28,
     height: 26
   }),
   new Slimer({
     x: 910,
-    y: 100,
+    y: 20,
     width: 28,
     height: 26
   }),
   new Slimer({
     x: 1210,
-    y: 100,
+    y: 20,
     width: 28,
     height: 26
   }),
   new Slimer({
     x: 1410,
-    y: 100,
+    y: 20,
     width: 28,
     height: 26
   }),
   new Slimer({
     x: 1810,
-    y: 100,
+    y: 20,
     width: 28,
     height: 26
   }),
