@@ -389,7 +389,7 @@ function animate(backgroundCanvas) {
   }
 
   //track scroll post distance
-  if (player.x > SCROLL_POST_RIGHT) {
+  if (player.x > SCROLL_POST_RIGHT && player.x < 2000) {
     const scrollPostDistance = player.x - SCROLL_POST_RIGHT;
     camera.x = scrollPostDistance;
   }
