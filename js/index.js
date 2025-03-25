@@ -120,14 +120,14 @@ const renderStaticLayers = async (layersData) => {
 // END - Tile setup
 
 // Change xy coordinates to move player's default position
-const player = new Player({
+let player = new Player({
   x: 100,
   y: 20,
   size: 32,
   velocity: { x: 0, y: 0 },
 });
 
-const slimers = [
+let slimers = [
   new Slimer({
     x: 510,
     y: 100,
@@ -166,7 +166,51 @@ const slimers = [
   }),
 ];
 
-const sprites = [];
+let sprites = [];
+let hearts = [
+  new Heart({
+    x: 10,
+    y: 10,
+    width: 21,
+    height: 18,
+    imageSrc: "./images/hearts.png",
+    spriteCropbox: {
+      x: 0,
+      y: 0,
+      width: 21,
+      height: 18,
+      frames: 4,
+    },
+  }),
+  new Heart({
+    x: 33,
+    y: 10,
+    width: 21,
+    height: 18,
+    imageSrc: "./images/hearts.png",
+    spriteCropbox: {
+      x: 0,
+      y: 0,
+      width: 21,
+      height: 18,
+      frames: 4,
+    },
+  }),
+  new Heart({
+    x: 56,
+    y: 10,
+    width: 21,
+    height: 18,
+    imageSrc: "./images/hearts.png",
+    spriteCropbox: {
+      x: 0,
+      y: 0,
+      width: 21,
+      height: 18,
+      frames: 4,
+    },
+  }),
+];
 
 const keys = {
   w: {
@@ -181,7 +225,7 @@ const keys = {
 };
 
 let lastTime = performance.now();
-const camera = {
+let camera = {
   x: 0,
   y: 0,
 };
@@ -192,6 +236,103 @@ let skyBackgroundCanvas = null;
 let cloudBackgroundCanvas = null;
 let mountBackgroundCanvas = null;
 
+function init() {
+  player = new Player({
+    x: 100,
+    y: 20,
+    size: 32,
+    velocity: { x: 0, y: 0 },
+  });
+
+  slimers = [
+    new Slimer({
+      x: 510,
+      y: 100,
+      width: 28,
+      height: 26,
+    }),
+    new Slimer({
+      x: 610,
+      y: 100,
+      width: 28,
+      height: 26,
+    }),
+    new Slimer({
+      x: 910,
+      y: 100,
+      width: 28,
+      height: 26,
+    }),
+    new Slimer({
+      x: 1210,
+      y: 100,
+      width: 28,
+      height: 26,
+    }),
+    new Slimer({
+      x: 1410,
+      y: 100,
+      width: 28,
+      height: 26,
+    }),
+    new Slimer({
+      x: 1810,
+      y: 100,
+      width: 28,
+      height: 26,
+    }),
+  ];
+
+  sprites = [];
+  hearts = [
+    new Heart({
+      x: 10,
+      y: 10,
+      width: 21,
+      height: 18,
+      imageSrc: "./images/hearts.png",
+      spriteCropbox: {
+        x: 0,
+        y: 0,
+        width: 21,
+        height: 18,
+        frames: 4,
+      },
+    }),
+    new Heart({
+      x: 33,
+      y: 10,
+      width: 21,
+      height: 18,
+      imageSrc: "./images/hearts.png",
+      spriteCropbox: {
+        x: 0,
+        y: 0,
+        width: 21,
+        height: 18,
+        frames: 4,
+      },
+    }),
+    new Heart({
+      x: 56,
+      y: 10,
+      width: 21,
+      height: 18,
+      imageSrc: "./images/hearts.png",
+      spriteCropbox: {
+        x: 0,
+        y: 0,
+        width: 21,
+        height: 18,
+        frames: 4,
+      },
+    }),
+  ];
+  camera = {
+    x: 0,
+    y: 0,
+  };
+}
 function animate(backgroundCanvas) {
   // Calculate delta time
   const currentTime = performance.now();
@@ -226,6 +367,14 @@ function animate(backgroundCanvas) {
         collisionDirection === "left" ||
         collisionDirection === "right"
       ) {
+        const fullHearts = hearts.filter((heart) => {
+          return !heart.depleted;
+        });
+        if (!player.isInvincible && fullHearts.length > 0) {
+          fullHearts[fullHearts.length - 1].depleted = true;
+        } else if (fullHearts.length === 0) {
+          init()
+        }
         player.setIsInvincible();
       }
     }
@@ -266,7 +415,13 @@ function animate(backgroundCanvas) {
 
   // c.fillRect(SCROLL_POST_RIGHT, 200, 10, 100);
   c.restore();
-
+  c.save();
+  c.scale(dpr + 2.5, dpr + 2.5);
+  for (let i = hearts.length - 1; i >= 0; i--) {
+    const heart = hearts[i];
+    heart.draw(c);
+  }
+  c.restore();
   requestAnimationFrame(() => animate(backgroundCanvas));
 }
 
