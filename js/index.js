@@ -1,6 +1,7 @@
 const canvas = document.querySelector("canvas");
 const c = canvas.getContext("2d");
 const dpr = 2;
+let gamePaused = false;
 
 canvas.width = 1366 * dpr;
 canvas.height = 720 * dpr;
@@ -23,6 +24,7 @@ const mountLayerData = {
 const layersData = {
   l_ground: l_ground,
   l_Decor: l_Decor,
+  l_quiz: l_quiz,
   l_collisions: l_collisions,
 };
 
@@ -32,6 +34,7 @@ const tilesets = {
   l_mount: { imageUrl: "./images/BG3.png", tileSize: 16 },
   l_ground: { imageUrl: "./images/Tileset.png", tileSize: 16 },
   l_Decor: { imageUrl: "./images/Decors.png", tileSize: 16 },
+  l_quiz: { imageUrl: './images/quiz.png', tileSize: 16 },
   l_collisions: { imageUrl: "./images/public", tileSize: 16 },
 };
 
@@ -333,6 +336,9 @@ function init() {
     y: 0,
   };
 }
+
+let questionTriggered = false;
+
 function animate(backgroundCanvas) {
   // Calculate delta time
   const currentTime = performance.now();
@@ -387,6 +393,11 @@ function animate(backgroundCanvas) {
       sprites.splice(i, 1);
     }
   }
+  if (!questionTriggered && player.x === 1000 && !gamePaused) {
+    questionTriggered = true;
+    scenes.multipleQuestion();
+  }
+  
 
   //track scroll post distance
   if (player.x > SCROLL_POST_RIGHT && player.x < 2000) {
@@ -422,6 +433,10 @@ function animate(backgroundCanvas) {
     heart.draw(c);
   }
   c.restore();
+  if (!questionTriggered && player.x >= 1000 && player.x < 1010 && !gamePaused) {
+    questionTriggered = true;
+    scenes.multipleQuestion();
+  }
   requestAnimationFrame(() => animate(backgroundCanvas));
 }
 
@@ -444,3 +459,177 @@ const startRendering = async () => {
 };
 
 startRendering();
+
+// Global flag so the question doesn't reappear after answering
+let questionAnswered = false;
+// Store the current question data
+let currentQuestion = null;
+
+const generateQuestion = () => {
+  // Generate two random numbers between 1 and 10
+  const a = Math.floor(Math.random() * 10) + 1;
+  const b = Math.floor(Math.random() * 10) + 1;
+  const questionText = `What is ${a} + ${b}?`;
+  const correctAnswer = a + b;
+  
+  // Generate distractors: start with the correct answer
+  let answers = [correctAnswer];
+  while (answers.length < 3) {
+    const offset = Math.floor(Math.random() * 5) - 2; // random offset between -2 and 2
+    let distractor = correctAnswer + offset;
+    // Ensure distractor is not the correct answer, is positive, and is unique
+    if (distractor !== correctAnswer && distractor > 0 && !answers.includes(distractor)) {
+      answers.push(distractor);
+    }
+  }
+  // Shuffle the answers randomly
+  answers.sort(() => Math.random() - 0.5);
+  
+  return { questionText, correctAnswer, answers };
+};
+
+const UIManager = {
+  questionScreen: () => {
+    if (questionAnswered) return; // Do nothing if question has been answered
+
+    // Generate a new question
+    currentQuestion = generateQuestion();
+    
+    let qs = document.getElementById("questionScreen");
+    if (!qs) {
+      qs = document.createElement("div");
+      qs.id = "questionScreen";
+      qs.style.cssText = `
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.8);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      `;
+      document.body.appendChild(qs);
+    }
+    qs.innerHTML = "";
+    
+    // Set up the question text using auto-generated content
+    const questionElem = document.createElement("h2");
+    questionElem.innerText = currentQuestion.questionText;
+    questionElem.style.color = "#fff";
+    qs.appendChild(questionElem);
+    
+    const answersContainer = document.createElement("div");
+    answersContainer.style.display = "flex";
+    answersContainer.style.gap = "10px";
+    
+    // Use the auto-generated answer choices
+    currentQuestion.answers.forEach(answer => {
+      const btn = document.createElement("button");
+      btn.innerText = answer;
+      btn.style.padding = "10px 20px";
+      btn.style.fontSize = "16px";
+      btn.style.cursor = "pointer";
+      btn.style.border = "none";
+      btn.style.borderRadius = "5px";
+      
+      const answerHandler = () => {
+        questionAnswered = true; // disable further appearance
+        UIManager.hideQuestionScreen();
+        const isCorrect = (answer === currentQuestion.correctAnswer);
+        UIManager.resultScreen(isCorrect);
+      };
+
+      btn.addEventListener("click", answerHandler);
+      btn.addEventListener("touchstart", answerHandler);
+      answersContainer.appendChild(btn);
+    });
+    
+    qs.appendChild(answersContainer);
+    qs.style.display = "flex";
+    gamePaused = true;
+  },
+
+  hideQuestionScreen: () => {
+    const qs = document.getElementById("questionScreen");
+    if (qs) {
+      qs.remove();
+      console.log("Question screen removed.");
+    }
+  },
+
+  resultScreen: (isCorrect) => {
+    let rs = document.getElementById("resultScreen");
+    if (!rs) {
+      rs = document.createElement("div");
+      rs.id = "resultScreen";
+      rs.style.cssText = `
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.8);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      `;
+      document.body.appendChild(rs);
+    }
+    rs.innerHTML = "";
+    
+    const resultText = document.createElement("h2");
+    resultText.innerText = isCorrect ? "Correct!" : "Wrong!";
+    resultText.style.color = "#fff";
+    rs.appendChild(resultText);
+    rs.style.display = "flex";
+    
+    console.log("Result screen displayed:", resultText.innerText);
+    
+    // Remove result screen when the user interacts (click, touch, or move)
+    const removeResultHandler = () => {
+      UIManager.hideResultScreen();
+      gamePaused = false;
+      rs.removeEventListener("click", removeResultHandler);
+      rs.removeEventListener("touchstart", removeResultHandler);
+      rs.removeEventListener("mousemove", removeResultHandler);
+      rs.removeEventListener("touchmove", removeResultHandler);
+      console.log("Result screen removed via interaction.");
+    };
+
+    rs.addEventListener("click", removeResultHandler);
+    rs.addEventListener("touchstart", removeResultHandler);
+    rs.addEventListener("mousemove", removeResultHandler);
+    rs.addEventListener("touchmove", removeResultHandler);
+  },
+
+  hideResultScreen: () => {
+    const rs = document.getElementById("resultScreen");
+    if (rs) {
+      rs.remove();
+      console.log("hideResultScreen called.");
+    }
+  }
+};
+
+
+
+function handleAnswer(answer) {
+  // Process the answer, e.g. check if it's correct, update score, etc.
+  console.log("User answered:", answer);
+  
+  // Hide the question screen after answering
+  UIManager.hideQuestionScreen();
+}
+
+const scenes = {
+  multipleQuestion: () => UIManager.questionScreen(),
+}
+
+
+
