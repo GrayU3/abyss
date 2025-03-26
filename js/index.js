@@ -469,7 +469,7 @@ const generateQuestion = () => {
   // Generate two random numbers between 1 and 10
   const a = Math.floor(Math.random() * 10) + 1;
   const b = Math.floor(Math.random() * 10) + 1;
-  const questionText = `What is ${a} + ${b}?`;
+  const questionText = `Berapa ${a} + ${b}?`;
   const correctAnswer = a + b;
   
   // Generate distractors: start with the correct answer
