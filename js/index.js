@@ -490,15 +490,14 @@ const generateQuestion = () => {
 
 const UIManager = {
   questionScreen: () => {
-    if (questionAnswered) return; // Do nothing if question has been answered
-
-    // Generate a new question
+    if (questionAnswered) return; // Don't show if already answered
     currentQuestion = generateQuestion();
-    
+
     let qs = document.getElementById("questionScreen");
     if (!qs) {
       qs = document.createElement("div");
       qs.id = "questionScreen";
+      qs.classList.add("ui-screen");
       qs.style.cssText = `
         position: absolute;
         top: 0;
@@ -516,28 +515,37 @@ const UIManager = {
     }
     qs.innerHTML = "";
     
-    // Set up the question text using auto-generated content
+    // Create a styled h2 element using the template literal question text
     const questionElem = document.createElement("h2");
     questionElem.innerText = currentQuestion.questionText;
-    questionElem.style.color = "#fff";
+    // Add styling via inline CSS or CSS classes as desired:
+    questionElem.style.cssText = `
+      color: #fff;
+      font-size: 2em;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+      margin-bottom: 20px;
+    `;
     qs.appendChild(questionElem);
     
     const answersContainer = document.createElement("div");
     answersContainer.style.display = "flex";
     answersContainer.style.gap = "10px";
     
-    // Use the auto-generated answer choices
     currentQuestion.answers.forEach(answer => {
       const btn = document.createElement("button");
       btn.innerText = answer;
-      btn.style.padding = "10px 20px";
-      btn.style.fontSize = "16px";
-      btn.style.cursor = "pointer";
-      btn.style.border = "none";
-      btn.style.borderRadius = "5px";
+      btn.style.cssText = `
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        border-radius: 5px;
+        background: #333;
+        color: #fff;
+      `;
       
       const answerHandler = () => {
-        questionAnswered = true; // disable further appearance
+        questionAnswered = true;
         UIManager.hideQuestionScreen();
         const isCorrect = (answer === currentQuestion.correctAnswer);
         UIManager.resultScreen(isCorrect);
